@@ -57,7 +57,7 @@ $countries = [
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>min9.news</title>
+    <title>newsless.cc</title>
     <style>
 body {
     font: 1em/1.5 monospace;
@@ -86,7 +86,7 @@ select {
 </head>
 <body>
     <center>
-        <h1><b>min9.news:</b> <font color="#9400d3"><i>Minimal Headlines</i></font></h1>
+        <h1><b>newsless.cc:</b> <font color="#9400d3"><i>Minimal Headlines</i></font></h1>
         <hr>
         <small>Built by <a href="https://github.com/amadv" target="_blank"><b>amadv</b></a></small>
     </center>
