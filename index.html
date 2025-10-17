@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>newsless.cc</title>
+  <style>
+    html {
+     zoom: 120%
+    }
+    /* Base styles for light mode */
+    body {
+      font: 1em/1.5 monospace;
+      padding: 16vh 2em 0;
+      background: #eee;
+      color: #111;
+      display: grid;
+      grid: 1fr / minmax(auto, 64ch);
+      justify-content: center;
+      height: 100%;
+    }
+    a { text-decoration: none; border-bottom: 1px dotted; color: #111; }
+    a:hover { color: #9400d3; }
+    select {
+      font: inherit;
+      margin: 1em auto;
+      display: block;
+      background: #fff;
+      border: 1px solid #ccc;
+      color: #111;
+    }
+    ol { padding-left: 1em; }
+    footer { color: #333; }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #111;
+        color: #eee;
+      }
+      a { color: #eee; border-bottom-color: #888; }
+      a:hover { color: #aaffaa; }
+      select {
+        background: #222;
+        border: 1px solid #555;
+        color: #eee;
+      }
+      footer { color: #aaa; }
+    }
+  </style>
+</head>
+<body>
+  <center>
+    <h1><b>newsless.cc</b></h1>
+    <hr />
+    <small>Built by <a href="https://github.com/amadv" target="_blank"><b>amadv</b></a></small>
+  </center>
+
+  <div id="section-title"></div>
+
+  <p>
+    <center>
+      <a href="?loc=US">TOP</a>
+      <a href="?section=technology&loc=US">TECH</a>
+      <a href="?section=world&loc=US">WORLD</a>
+      <a href="?section=business&loc=US">BUSINESS</a>
+    </center>
+  </p>
+
+  <form id="countryForm">
+    <select name="loc" id="locSelect"></select>
+  </form>
+
+  <ol id="news-list"></ol>
+
+  <footer><center><small>Powered by JS + RSS</small></center></footer>
+
+  <script>
+    const countries = {
+      US: "🇺🇸 US", GB: "🇬🇧 UK", CA: "🇨🇦 Canada", AU: "🇦🇺 Australia",
+      IN: "🇮🇳 India", DE: "🇩🇪 Germany", FR: "🇫🇷 France", JP: "🇯🇵 Japan",
+      BR: "🇧🇷 Brazil", ZA: "🇿🇦 South Africa",
+    };
+
+    const params = new URLSearchParams(location.search);
+    const section = params.get("section") || "";
+    const loc = (params.get("loc") || "US").toUpperCase();
+    const lang = params.get("lang") || "en";
+
+    if (section) {
+      document.getElementById("section-title").innerHTML =
+        `<center><h2>${section.toUpperCase()} NEWS</h2></center>`;
+    }
+
+    const select = document.getElementById("locSelect");
+    Object.entries(countries).forEach(([code, label]) => {
+      const opt = document.createElement("option");
+      opt.value = code;
+      opt.textContent = label;
+      if (code === loc) opt.selected = true;
+      select.appendChild(opt);
+    });
+
+    document.getElementById("countryForm").addEventListener("change", () => {
+      const newLoc = select.value;
+      const newUrl = new URL(location.href);
+      newUrl.searchParams.set("loc", newLoc);
+      if (section) newUrl.searchParams.set("section", section);
+      location.href = newUrl;
+    });
+
+    let feedUrl = "";
+    if (section) {
+      feedUrl = `https://news.google.com/news/rss/headlines/section/topic/${section.toUpperCase()}?ned=${loc}&hl=${lang}`;
+    } else {
+      feedUrl = `https://news.google.com/rss?gl=${loc}&hl=${lang}-${loc}&ceid=${loc}:${lang}`;
+    }
+
+    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+
+    async function loadFeed() {
+      const list = document.getElementById("news-list");
+      list.innerHTML = "<li>Loading...</li>";
+
+      try {
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+
+        if (!data.items || !data.items.length) {
+          list.innerHTML = "<li>No news found.</li>";
+          return;
+        }
+
+        list.innerHTML = "";
+        data.items.forEach(item => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <a href="${item.link}" target="_blank">${item.title}</a>
+            <p><small>${new Date(item.pubDate).toLocaleDateString(undefined, {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
+            })} | ${new Date(item.pubDate).toLocaleTimeString(undefined, {
+              hour: 'numeric',
+              minute: '2-digit'
+            })}</small></p>
+          `;
+          list.appendChild(li);
+        });
+      } catch (e) {
+        list.innerHTML = `<li>⚠️ Failed to load feed: ${e}</li>`;
+      }
+    }
+
+    loadFeed();
+  </script>
+</body>
+</html>
+
