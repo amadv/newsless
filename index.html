@@ -10,16 +10,17 @@
     /* Base styles for light mode */
     body {
       font: 1em/1.5 monospace;
-      padding: 16vh 2em 0;
-      background: #eee;
+      padding: 2vh 2em 0;
+      background: #fff;
       color: #111;
       display: grid;
       grid: 1fr / minmax(auto, 64ch);
       justify-content: center;
       height: 100%;
     }
-    a { text-decoration: none; border-bottom: 1px dotted; color: #111; }
-    a:hover { color: #9400d3; }
+    a { text-decoration: none; border-bottom: 1px; color: #111; }
+    a:hover { background-color: #000; color: #fff }
+    center { padding: 15px 0 0 }
     select {
       font: inherit;
       margin: 1em auto;
@@ -38,7 +39,7 @@
         color: #eee;
       }
       a { color: #eee; border-bottom-color: #888; }
-      a:hover { color: #aaffaa; }
+      a:hover { background-color: #fff; color: #000; }
       select {
         background: #222;
         border: 1px solid #555;
@@ -52,19 +53,17 @@
   <center>
     <h1><b>newsless.cc</b></h1>
     <hr />
-    <small>Built by <a href="https://github.com/amadv" target="_blank"><b>amadv</b></a></small>
+    <small>No adds, no tracking, simple news, move on with your day.</small>
   </center>
 
   <div id="section-title"></div>
 
-  <p>
-    <center>
-      <a href="?loc=US">TOP</a>
-      <a href="?section=technology&loc=US">TECH</a>
-      <a href="?section=world&loc=US">WORLD</a>
-      <a href="?section=business&loc=US">BUSINESS</a>
-    </center>
-  </p>
+  <center>
+    <a href="?loc=US">TOP</a>
+    <a href="?section=technology&loc=US">TECH</a>
+    <a href="?section=world&loc=US">WORLD</a>
+    <a href="?section=business&loc=US">BUSINESS</a>
+  </center>
 
   <form id="countryForm">
     <select name="loc" id="locSelect"></select>
@@ -72,7 +71,7 @@
 
   <ol id="news-list"></ol>
 
-  <footer><center><small>Powered by JS + RSS</small></center></footer>
+  <footer><center><small>Support <a href="https://github.com/amadv" target="_blank"><b>amadv</b></a></small></center></footer>
 
   <script>
     const countries = {
